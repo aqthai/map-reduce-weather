@@ -52,7 +52,7 @@ public class MaxTempHumid extends Configured implements Tool {
 					return;
  			} //end for
  			
- 			context.write(new Text(element[ZIPCODE]), new DoubleWritable(Double.parseDouble(element[TEMP])));
+ 			context.write(new Text(element[ZIPCODE] + " " + new Text(element[YEAR])), new DoubleWritable(Double.parseDouble(element[TEMP])));
  			
  		}//end map
  		
@@ -63,23 +63,25 @@ public class MaxTempHumid extends Configured implements Tool {
 		
 		public void reduce(Text key, Iterable<DoubleWritable> values, Context context) throws IOException, InterruptedException
 		{
-			double sum = 0.0d;
+			double maxTemp = 0.0d;
 			long counter = 0;
 			Iterator<DoubleWritable> valItr = values.iterator();
 			
 			while(valItr.hasNext())
 			{
-				sum += valItr.next().get();
-				counter++;
+				double temp = valItr.next().get();
+				if (temp > maxTemp){
+					maxTemp = temp;
+				}
 			}
-			context.write(key, new Text("" + (sum / counter)));
+			context.write(key, new Text("" + maxTemp));
 		}//end reduce
 		
 	}//end MyReducer
  	
 	public static void main(String[] args) throws Exception
 	{
-		int res = ToolRunner.run(new Configuration(), new AverageTempByZipCode(), args);
+		int res = ToolRunner.run(new Configuration(), new MaxTempHumid(), args);
 		System.exit(res);
 	}
 	
