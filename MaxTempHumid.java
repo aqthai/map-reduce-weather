@@ -22,7 +22,7 @@ import org.apache.hadoop.util.ToolRunner;
 
 public class MaxTempHumid extends Configured implements Tool {
 
-	public static class MyMapper extends Mapper<LongWritable, Text, Text, DoubleWritable>
+	public static class MyMapper extends Mapper<LongWritable, Text, Text, Text>
  	{	
 		private static int STATION_ID	= 0;
 		private static int ZIPCODE		= 1;
@@ -52,29 +52,36 @@ public class MaxTempHumid extends Configured implements Tool {
 					return;
  			} //end for
  			
- 			context.write(new Text(element[ZIPCODE] + " " + new Text(element[YEAR])), new DoubleWritable(Double.parseDouble(element[TEMP])));
+ 			context.write(new Text(element[ZIPCODE] + "    " + element[YEAR]), new Text(element[TEMP] + " " + element[HUMID]));
  			
- 		}//end map
+ 		}//end map new DoubleWritable(Double.parseDouble(element[TEMP]))
  		
 	}//end MyMapper
  		
-	public static class MyReducer extends Reducer<Text, DoubleWritable, Text, Text>
+	public static class MyReducer extends Reducer<Text, Text, Text, Text>
 	{
 		
-		public void reduce(Text key, Iterable<DoubleWritable> values, Context context) throws IOException, InterruptedException
+		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
 		{
 			double maxTemp = 0.0d;
-			long counter = 0;
-			Iterator<DoubleWritable> valItr = values.iterator();
+			double maxHumidity = 0.0d;
+			context.write(new Text("Zipcode  Year"), new Text("Max Temperature  Max Humidity"));
+			
+			Iterator<Text> valItr = values.iterator();
 			
 			while(valItr.hasNext())
 			{
-				double temp = valItr.next().get();
+				String [] sValues = valItr.next().toString().split(" ");
+				double temp = new Double(Double.parseDouble(sValues[0]));
+				double humidity = new Double(Double.parseDouble(sValues[1]));
 				if (temp > maxTemp){
 					maxTemp = temp;
 				}
+				if (humidity > maxHumidity){
+					maxHumidity = humidity;
+				}
 			}
-			context.write(key, new Text("" + maxTemp));
+			context.write(key, new Text("" + maxTemp + "            " + maxHumidity));
 		}//end reduce
 		
 	}//end MyReducer
@@ -139,7 +146,7 @@ public class MaxTempHumid extends Configured implements Tool {
 		
 		//sets map output key/value types
 	    job.setMapOutputKeyClass(Text.class);
-	    job.setMapOutputValueClass(DoubleWritable.class);
+	    job.setMapOutputValueClass(Text.class);
 	    
 		//Set Reducer class
 	    job.setReducerClass(MyReducer.class);
