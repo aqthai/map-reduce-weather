@@ -65,12 +65,14 @@ public class MaxTempHumid extends Configured implements Tool {
 		{
 			double maxTemp = 0.0d;
 			double maxHumidity = 0.0d;
-			context.write(new Text("Zipcode  Year"), new Text("Max Temperature  Max Humidity"));
 			
 			Iterator<Text> valItr = values.iterator();
 			
 			while(valItr.hasNext())
 			{
+				if (maxTemp == 0.0d && maxHumidity == 0.0d){
+					context.write(new Text("Zip-code Year"), new Text("Max-Temperature  Max-Humidity"));
+				}
 				String [] sValues = valItr.next().toString().split(" ");
 				double temp = new Double(Double.parseDouble(sValues[0]));
 				double humidity = new Double(Double.parseDouble(sValues[1]));
@@ -81,7 +83,7 @@ public class MaxTempHumid extends Configured implements Tool {
 					maxHumidity = humidity;
 				}
 			}
-			context.write(key, new Text("" + maxTemp + "            " + maxHumidity));
+			context.write(key, new Text("" + maxTemp + "               " + maxHumidity));
 		}//end reduce
 		
 	}//end MyReducer
