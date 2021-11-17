@@ -89,7 +89,7 @@ public class MaxTempHumid extends Configured implements Tool {
 					maxHumidity = humidity;
 				}
 			}
-			context.write(key, new Text("" + maxTemp + "               " + maxHumidity));
+			context.write(key, new Text("" + maxTemp + "      " + maxHumidity));
 		}//end reduce
 		
 	}//end MyReducer
