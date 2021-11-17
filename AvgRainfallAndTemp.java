@@ -1,3 +1,12 @@
+/**
+ * AvgRainfallTemp reads a text file formatted with the following columns
+ * StationID | Zipcode |  Lat |  Lon  |  Temp | Percip | Humid | Year | Month
+ * and writes  out Zipcode | Year | AverageRainfall | AverageTemperature
+ * 
+ * Author: Alvin Thai, Daniel Holguin, Jarom Montgomerry, Nicholas Knaggs
+ * Prof Silva ACO 432
+ */
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.StringTokenizer;
