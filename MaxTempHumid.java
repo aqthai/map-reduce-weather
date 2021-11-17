@@ -1,3 +1,12 @@
+/**
+ * AvgRainfallTemp reads a text file formatted with the following columns
+ * StationID | Zipcode |  Lat |  Lon  |  Temp | Percip | Humid | Year | Month
+ * and writes  out Zipcode | Year | MaxTemperature | MaxHumidity
+ * 
+ * Author: Alvin Thai, Daniel Holguin, Jarom Montgomerry, Nicholas Knaggs
+ * Prof Silva ACO 432
+ */
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -54,7 +63,7 @@ public class MaxTempHumid extends Configured implements Tool {
  			
  			context.write(new Text(element[ZIPCODE] + "    " + element[YEAR]), new Text(element[TEMP] + " " + element[HUMID]));
  			
- 		}//end map new DoubleWritable(Double.parseDouble(element[TEMP]))
+ 		}
  		
 	}//end MyMapper
  		
